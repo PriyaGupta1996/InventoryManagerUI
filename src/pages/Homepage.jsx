@@ -6,11 +6,15 @@ import React, { useEffect, useState } from "react";
 import { fetchSearchResults } from "../utils/fetchSearchResults";
 import { fetchCategory } from "../utils/fetchCategory";
 import { fetchVendor } from "../utils/fetchVendor";
+
 export const Homepage = () => {
   const [searchResults, setSearchResults] = useState([]);
   const [category, setCategory] = useState([]);
   const [vendor, setVendor] = useState([]);
   const [filters, setFilters] = useState({});
+  const [minPrice, setMinPrice] = useState();
+  const [maxPrice, setMaxPrice] = useState();
+
   const getFilteredProductData = async (searchTerm) => {
     const result = await fetchSearchResults(searchTerm, filters);
     setSearchResults(result);
@@ -22,6 +26,20 @@ export const Homepage = () => {
   const getVendorData = async () => {
     const result = await fetchVendor();
     setVendor(result);
+  };
+
+  const handleMinPriceInput = (e) => {
+    setMinPrice(e.target.value);
+    let currentFilter = Object.create(filters);
+    filters["minPrice"] = e.target.value;
+    setFilters(currentFilter);
+  };
+
+  const handleMaxPriceInput = (e) => {
+    setMaxPrice(e.target.value);
+    let currentFilter = Object.create(filters);
+    filters["maxPrice"] = e.target.value;
+    setFilters(currentFilter);
   };
 
   useEffect(() => {
@@ -41,14 +59,25 @@ export const Homepage = () => {
         setFilters={setFilters}
         filters={filters}
       />
-      {/* Price
-      <Filter value="price" data={[]} setFilters={setFilters} /> */}
       Vendor
       <Filter
         value="vendor"
         data={vendor}
         setFilters={setFilters}
         filters={filters}
+      />
+      <input
+        type="text"
+        placeholder="Min Price"
+        value={minPrice}
+        onChange={handleMinPriceInput}
+      />{" "}
+      &
+      <input
+        type="text"
+        placeholder="Max Price"
+        value={maxPrice}
+        onChange={handleMaxPriceInput}
       />
       <Table data={searchResults} />
     </div>
