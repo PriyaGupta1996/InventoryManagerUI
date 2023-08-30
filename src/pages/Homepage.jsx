@@ -30,14 +30,14 @@ export const Homepage = () => {
 
   const handleMinPriceInput = (e) => {
     setMinPrice(e.target.value);
-    let currentFilter = Object.create(filters);
+    let currentFilter = JSON.parse(JSON.stringify(filters));
     filters["minPrice"] = e.target.value;
     setFilters(currentFilter);
   };
 
   const handleMaxPriceInput = (e) => {
     setMaxPrice(e.target.value);
-    let currentFilter = Object.create(filters);
+    let currentFilter = JSON.parse(JSON.stringify(filters));
     filters["maxPrice"] = e.target.value;
     setFilters(currentFilter);
   };
@@ -79,7 +79,10 @@ export const Homepage = () => {
         value={maxPrice}
         onChange={handleMaxPriceInput}
       />
-      <Table data={searchResults} />
+      <Table
+        data={searchResults}
+        getFilteredProductData={getFilteredProductData}
+      />
     </div>
   );
 };

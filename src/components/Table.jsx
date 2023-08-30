@@ -1,14 +1,61 @@
-import React from "react";
+import React, { useState } from "react";
 import dustbin from "../images/dustbin.png";
 import pencil from "../images/pencil.png";
+import { deleteProduct } from "../utils/deleteProduct";
+import { updateProduct } from "../utils/updateProduct";
 const colorMap = {
-  alert: "red",
+  alert: "lightpink",
   ok: "yellow",
   good: "lightgreen",
 };
 export const Table = (props) => {
+  const [showConfirmation, setShowConfirmation] = useState(false);
+  const [productIdToDelete, setProductIdToDelete] = useState();
+  const [editMode, setEditMode] = useState({});
+  const [updateItem, setUpdateItem] = useState();
+
+  const handleShowConfirmation = (productId) => {
+    setShowConfirmation(true);
+    setProductIdToDelete(productId);
+  };
+
+  const handleDeleteProduct = async (productId) => {
+    await deleteProduct(productId);
+    props.getFilteredProductData("");
+    setShowConfirmation(false);
+  };
+
+  const handleEditClick = (row) => {
+    setEditMode({ [row.productId]: true });
+    setUpdateItem(row);
+  };
+  const handleSaveChanges = async () => {
+    await updateProduct(updateItem);
+    await props.getFilteredProductData();
+    setEditMode({ [updateItem.productId]: false });
+  };
+  const handleInputChange = (fieldName, value) => {
+    console.log("updateItem", updateItem);
+    let currentItem = JSON.parse(JSON.stringify(updateItem));
+    currentItem[fieldName] = value;
+    console.log("currentItem", currentItem);
+    setUpdateItem(currentItem);
+  };
+
   return (
     <div className="table-div">
+      {showConfirmation && (
+        <div className="confirmation-dialog">
+          <p>
+            Are you sure you want to delete the product with id :{" "}
+            {productIdToDelete}?
+          </p>
+          <button onClick={() => handleDeleteProduct(productIdToDelete)}>
+            Confirm
+          </button>
+          <button onClick={() => setShowConfirmation(false)}>Cancel</button>
+        </div>
+      )}
       <table className="table-data">
         <thead>
           <tr>
@@ -26,8 +73,32 @@ export const Table = (props) => {
             style={row.prime === true ? { backgroundColor: "lightblue" } : {}}
           >
             <td>{index + 1}</td>
-            <td>{row.productName}</td>
-            <td>{row.category}</td>
+            <td>
+              {editMode[row.productId] ? (
+                <input
+                  type="text"
+                  value={updateItem.productName}
+                  onChange={(e) =>
+                    handleInputChange("productName", e.target.value)
+                  }
+                />
+              ) : (
+                row.productName
+              )}
+            </td>
+            <td>
+              {editMode[row.productId] ? (
+                <input
+                  type="text"
+                  value={updateItem.category}
+                  onChange={(e) =>
+                    handleInputChange("category", e.target.value)
+                  }
+                />
+              ) : (
+                row.category
+              )}
+            </td>
             <td
               style={
                 row.quantity > row.maxCapacity * 0.75
@@ -35,25 +106,63 @@ export const Table = (props) => {
                   : row.quantity > row.maxCapacity * 0.25 &&
                     row.quantity < row.maxCapacity * 0.75
                   ? { backgroundColor: colorMap["ok"] }
-                  : { backgroundColor: colorMap["less"] }
+                  : { backgroundColor: colorMap["alert"] }
               }
             >
-              {row.quantity}
+              {editMode[row.productId] ? (
+                <input
+                  type="text"
+                  value={updateItem.quantity}
+                  onChange={(e) =>
+                    handleInputChange("quantity", e.target.value)
+                  }
+                />
+              ) : (
+                row.quantity
+              )}
             </td>
-            <td>Rs. {row.pricePerUnit}</td>
+            <td>
+              Rs.{" "}
+              {editMode[row.productId] ? (
+                <input
+                  type="text"
+                  value={updateItem.pricePerUnit}
+                  onChange={(e) =>
+                    handleInputChange("pricePerUnit", e.target.value)
+                  }
+                />
+              ) : (
+                row.pricePerUnit
+              )}
+            </td>
             <td>{row.shelfNumber}</td>
             <td>
               {
-                <a target="_blank" href={row.vendorLink}>
+                <a target="_blank" rel="noreferrer" href={row.vendorLink}>
                   {row.vendorName}
                 </a>
               }
             </td>
             <td>
-              <img className="dustbin" src={dustbin} />
+              <img
+                className="table-icon"
+                src={dustbin}
+                alt="delete"
+                onClick={() => handleShowConfirmation(row.productId)}
+              />
             </td>
             <td>
-              <img className="dustbin" src={pencil} />
+              {!editMode[row.productId] && (
+                <img
+                  className="table-icon"
+                  alt="edit"
+                  src={pencil}
+                  onClick={() => handleEditClick(row)}
+                />
+              )}
+              {editMode[row.productId] && (
+                <button onClick={() => handleSaveChanges()}>Save</button>
+              )}
             </td>
           </tr>
         ))}

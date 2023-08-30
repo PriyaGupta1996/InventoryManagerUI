@@ -31,7 +31,24 @@ table,th,tr,td{
   margin-top: 5%;
   margin-left: 10%;
 }
-.dustbin{
+.table-icon{
   width: 2rem
+}
+.confirmation-dialog {
+    width: 24%;
+    margin-left: 36%;
+    margin-top: 2%;
+    background-color: #ff000094;
+    border: 5px solid #ccc;
+    padding: 20px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.confirmation-dialog p {
+  margin-bottom: 10px;
+}
+
+.confirmation-dialog button {
+  margin-right: 10px;
 }
 
