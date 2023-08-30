@@ -1,7 +1,11 @@
 import React from "react";
 import dustbin from "../images/dustbin.png";
 import pencil from "../images/pencil.png";
-
+const colorMap = {
+  alert: "red",
+  ok: "yellow",
+  good: "lightgreen",
+};
 export const Table = (props) => {
   return (
     <div className="table-div">
@@ -18,11 +22,24 @@ export const Table = (props) => {
           </tr>
         </thead>
         {props.data.map((row, index) => (
-          <tr>
+          <tr
+            style={row.prime === true ? { backgroundColor: "lightblue" } : {}}
+          >
             <td>{index + 1}</td>
             <td>{row.productName}</td>
             <td>{row.category}</td>
-            <td>{row.quantity}</td>
+            <td
+              style={
+                row.quantity > row.maxCapacity * 0.75
+                  ? { backgroundColor: colorMap["good"] }
+                  : row.quantity > row.maxCapacity * 0.25 &&
+                    row.quantity < row.maxCapacity * 0.75
+                  ? { backgroundColor: colorMap["ok"] }
+                  : { backgroundColor: colorMap["less"] }
+              }
+            >
+              {row.quantity}
+            </td>
             <td>Rs. {row.pricePerUnit}</td>
             <td>{row.shelfNumber}</td>
             <td>
