@@ -6,6 +6,7 @@ import React, { useEffect, useState } from "react";
 import { fetchSearchResults } from "../utils/fetchSearchResults";
 import { fetchCategory } from "../utils/fetchCategory";
 import { fetchVendor } from "../utils/fetchVendor";
+import { fetchAvailableShelfNumber } from "../utils/fetchAvailableShelfNumber";
 
 export const Homepage = () => {
   const [searchResults, setSearchResults] = useState([]);
@@ -14,6 +15,7 @@ export const Homepage = () => {
   const [filters, setFilters] = useState({});
   const [minPrice, setMinPrice] = useState();
   const [maxPrice, setMaxPrice] = useState();
+  const [shelves, setShelves] = useState([]);
 
   const getFilteredProductData = async (searchTerm) => {
     const result = await fetchSearchResults(searchTerm, filters);
@@ -26,6 +28,11 @@ export const Homepage = () => {
   const getVendorData = async () => {
     const result = await fetchVendor();
     setVendor(result);
+  };
+
+  const fetchAvailableShelves = async () => {
+    const result = await fetchAvailableShelfNumber();
+    setShelves(result);
   };
 
   const handleMinPriceInput = (e) => {
@@ -46,6 +53,7 @@ export const Homepage = () => {
     getFilteredProductData("");
     getCategoryData();
     getVendorData();
+    fetchAvailableShelves();
   }, []);
 
   return (
@@ -82,6 +90,8 @@ export const Homepage = () => {
       <Table
         data={searchResults}
         getFilteredProductData={getFilteredProductData}
+        shelves={shelves}
+        vendor={vendor}
       />
     </div>
   );

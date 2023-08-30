@@ -10,13 +10,13 @@ const colorMap = {
 };
 export const Table = (props) => {
   const [showConfirmation, setShowConfirmation] = useState(false);
-  const [productIdToDelete, setProductIdToDelete] = useState();
+  const [productToDelete, setproductToDelete] = useState({});
   const [editMode, setEditMode] = useState({});
   const [updateItem, setUpdateItem] = useState();
 
-  const handleShowConfirmation = (productId) => {
+  const handleShowConfirmation = (product) => {
     setShowConfirmation(true);
-    setProductIdToDelete(productId);
+    setproductToDelete(product);
   };
 
   const handleDeleteProduct = async (productId) => {
@@ -47,10 +47,11 @@ export const Table = (props) => {
       {showConfirmation && (
         <div className="confirmation-dialog">
           <p>
-            Are you sure you want to delete the product with id :{" "}
-            {productIdToDelete}?
+            Are you sure you want to delete : {productToDelete.productName}?
           </p>
-          <button onClick={() => handleDeleteProduct(productIdToDelete)}>
+          <button
+            onClick={() => handleDeleteProduct(productToDelete.productId)}
+          >
             Confirm
           </button>
           <button onClick={() => setShowConfirmation(false)}>Cancel</button>
@@ -135,20 +136,46 @@ export const Table = (props) => {
                 row.pricePerUnit
               )}
             </td>
-            <td>{row.shelfNumber}</td>
             <td>
-              {
+              {editMode[row.productId] ? (
+                <select
+                  className="filter-dropdown"
+                  onChange={(e) =>
+                    handleInputChange("shelfNumber", e.target.value)
+                  }
+                >
+                  {props.shelves.map((item) => (
+                    <option value={item}>{item}</option>
+                  ))}
+                </select>
+              ) : (
+                row.shelfNumber
+              )}
+            </td>
+            <td>
+              {editMode[row.productId] ? (
+                <select
+                  className="filter-dropdown"
+                  onChange={(e) =>
+                    handleInputChange("vendorName", e.target.value)
+                  }
+                >
+                  {props.vendor.map((item) => (
+                    <option value={item.id}>{item.name}</option>
+                  ))}
+                </select>
+              ) : (
                 <a target="_blank" rel="noreferrer" href={row.vendorLink}>
                   {row.vendorName}
                 </a>
-              }
+              )}
             </td>
             <td>
               <img
                 className="table-icon"
                 src={dustbin}
                 alt="delete"
-                onClick={() => handleShowConfirmation(row.productId)}
+                onClick={() => handleShowConfirmation(row)}
               />
             </td>
             <td>
