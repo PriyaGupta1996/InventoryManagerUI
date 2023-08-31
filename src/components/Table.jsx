@@ -157,16 +157,16 @@ export const Table = (props) => {
                 <select
                   className="filter-dropdown"
                   onChange={(e) =>
-                    handleInputChange("vendorName", e.target.value)
+                    handleInputChange("vendor", JSON.parse(e.target.value))
                   }
                 >
                   {props.vendor.map((item) => (
-                    <option value={item.id}>{item.name}</option>
+                    <option value={JSON.stringify(item)}>{item.name}</option>
                   ))}
                 </select>
               ) : (
-                <a target="_blank" rel="noreferrer" href={row.vendorLink}>
-                  {row.vendorName}
+                <a target="_blank" rel="noreferrer" href={row.vendor.link}>
+                  {row.vendor.name}
                 </a>
               )}
             </td>
