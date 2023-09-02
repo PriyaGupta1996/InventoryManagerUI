@@ -5,6 +5,7 @@ export const fetchSearchResults = async (searchText, filters) => {
         if (params[key] === "")
             delete params[key]
     }
+    console.log("params", params)
     const results = await axios.get(`api/products`, { params })
-    return results.data;
+    return results.data.content;
 }

@@ -3,10 +3,10 @@ import { Header } from "../components/Header";
 import { Filter } from "../components/Filter";
 import { Table } from "../components/Table";
 import React, { useEffect, useState } from "react";
-import { fetchSearchResults } from "../utils/fetchSearchResults";
-import { fetchCategory } from "../utils/fetchCategory";
-import { fetchVendor } from "../utils/fetchVendor";
-import { fetchAvailableShelfNumber } from "../utils/fetchAvailableShelfNumber";
+import { fetchSearchResults } from "../services/fetchSearchResults";
+import { fetchCategory } from "../services/fetchCategory";
+import { fetchVendor } from "../services/fetchVendor";
+import { fetchAvailableShelfNumber } from "../services/fetchAvailableShelfNumber";
 
 export const Homepage = () => {
   const [searchResults, setSearchResults] = useState([]);
@@ -19,6 +19,7 @@ export const Homepage = () => {
 
   const getFilteredProductData = async (searchTerm) => {
     const result = await fetchSearchResults(searchTerm, filters);
+    console.log("result hre", result);
     setSearchResults(result);
   };
   const getCategoryData = async () => {
@@ -27,6 +28,7 @@ export const Homepage = () => {
   };
   const getVendorData = async () => {
     const result = await fetchVendor();
+    console.log("result category", result);
     setVendor(result);
   };
 

@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import dustbin from "../images/dustbin.png";
 import pencil from "../images/pencil.png";
-import { deleteProduct } from "../utils/deleteProduct";
-import { updateProduct } from "../utils/updateProduct";
+import { deleteProduct } from "../services/deleteProduct";
+import { updateProduct } from "../services/updateProduct";
 const colorMap = {
   alert: "lightpink",
   ok: "yellow",
