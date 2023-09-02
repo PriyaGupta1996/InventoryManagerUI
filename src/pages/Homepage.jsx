@@ -21,18 +21,17 @@ export const Homepage = () => {
   const [pageNo, setPageNo] = useState(0);
   const [totalPage, setTotalPage] = useState();
   const [pageSize, setPageSize] = useState();
+  const [sortOrder, setSortOrder] = useState(true);
+  const [orderBy, setOrderBy] = useState();
 
-  const getFilteredProductData = async (
-    searchTerm,
-    filters,
-    pageNo,
-    pageSize
-  ) => {
+  const getFilteredProductData = async () => {
     const result = await fetchSearchResults(
       searchTerm,
       filters,
       pageNo,
-      pageSize
+      pageSize,
+      orderBy,
+      sortOrder
     );
     setSearchResults(result.content);
     setTotalPage(result.totalPages);
@@ -66,17 +65,20 @@ export const Homepage = () => {
     setFilters(currentFilter);
   };
 
-  const handlePageNoClick = async (pageIndex) => {
-    setPageNo(pageIndex);
-    getFilteredProductData("", filters, pageIndex, pageSize);
-  };
-
   useEffect(() => {
-    getFilteredProductData("", filters);
+    getFilteredProductData();
     getCategoryData();
     getVendorData();
     fetchAvailableShelves();
   }, []);
+
+  useEffect(() => {
+    getFilteredProductData();
+  }, [pageNo]);
+
+  useEffect(() => {
+    getFilteredProductData();
+  }, [orderBy, sortOrder]);
 
   return (
     <div className="App">
@@ -122,6 +124,9 @@ export const Homepage = () => {
           shelves={shelves}
           vendor={vendor}
           filters={filters}
+          setOrderBy={setOrderBy}
+          setSortOrder={setSortOrder}
+          sortOrder={sortOrder}
         />
       ) : (
         <div style={{ marginTop: "10rem" }}>
@@ -130,7 +135,7 @@ export const Homepage = () => {
       )}
       <Pagination
         pageNo={pageNo}
-        handlePageNoClick={handlePageNoClick}
+        setPageNo={setPageNo}
         pageSize={pageSize}
         totalPage={totalPage}
       />

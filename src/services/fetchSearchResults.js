@@ -1,6 +1,6 @@
 import axios from "axios";
-export const fetchSearchResults = async (searchText, filters, pageNo, pageSize) => {
-    console.log("filters", filters)
+export const fetchSearchResults = async (searchText, filters, pageNo, pageSize, orderBy, sortOrder) => {
+    console.log("filters", pageNo, pageSize);
     let params = {
         "productName": searchText,
         "category": filters?.category,
@@ -8,7 +8,9 @@ export const fetchSearchResults = async (searchText, filters, pageNo, pageSize) 
         "minPrice": filters?.minPrice,
         "maxPrice": filters?.maxPrice,
         "page": pageNo,
-        "size": pageSize
+        "size": pageSize,
+        "orderBy": orderBy,
+        "sortOrder": sortOrder === true ? "dsc" : "asc"
     }
     for (let key in params) {
         if (params[key] === "")

@@ -21,7 +21,7 @@ export const Table = (props) => {
 
   const handleDeleteProduct = async (productId) => {
     await deleteProduct(productId);
-    props.getFilteredProductData("", props.filters);
+    props.getFilteredProductData();
     setShowConfirmation(false);
   };
 
@@ -42,6 +42,11 @@ export const Table = (props) => {
     setUpdateItem(currentItem);
   };
 
+  const handleSortByTitle = (title) => {
+    props.setOrderBy(title);
+    props.setSortOrder(!props.sortOrder);
+  };
+
   return (
     <div className="table-div">
       {showConfirmation && (
@@ -60,20 +65,24 @@ export const Table = (props) => {
       <table className="table-data">
         <thead>
           <tr>
-            <th>Sr. No.</th>
-            <th>Product Name</th>
-            <th>Category</th>
-            <th>Quantity</th>
-            <th>Price Per Unit</th>
-            <th>Shelf Number</th>
-            <th>Vendor</th>
+            <th onClick={() => handleSortByTitle("name")}>Product Name</th>
+            <th onClick={() => handleSortByTitle("category")}>Category</th>
+            <th onClick={() => handleSortByTitle("shelf.quantity")}>
+              Quantity
+            </th>
+            <th onClick={() => handleSortByTitle("pricePerUnit")}>
+              Price Per Unit
+            </th>
+            <th onClick={() => handleSortByTitle("shelf.shelfNumber")}>
+              Shelf Number
+            </th>
+            <th onClick={() => handleSortByTitle("vendor.name")}>Vendor</th>
           </tr>
         </thead>
         {props.data.map((row, index) => (
           <tr
             style={row.prime === true ? { backgroundColor: "lightblue" } : {}}
           >
-            <td>{index + 1}</td>
             <td>
               {editMode[row.productId] ? (
                 <input

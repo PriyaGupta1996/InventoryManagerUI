@@ -10,7 +10,7 @@ export const Pagination = (props) => {
     <div display="flex" style={{ marginTop: "2rem" }}>
       {pagesIndexToDisplay.map((pageIndex) => (
         <button
-          onClick={() => props.handlePageNoClick(pageIndex - 1)}
+          onClick={() => props.setPageNo(pageIndex - 1)}
           style={
             pageIndex === props.pageNo + 1 ? { backgroundColor: "yellow" } : {}
           }
