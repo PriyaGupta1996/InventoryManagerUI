@@ -7,20 +7,36 @@ import { fetchSearchResults } from "../services/fetchSearchResults";
 import { fetchCategory } from "../services/fetchCategory";
 import { fetchVendor } from "../services/fetchVendor";
 import { fetchAvailableShelfNumber } from "../services/fetchAvailableShelfNumber";
+import { Pagination } from "../components/Pagination";
 
 export const Homepage = () => {
   const [searchResults, setSearchResults] = useState([]);
+  const [searchTerm, setSearchTerm] = useState("");
   const [category, setCategory] = useState([]);
   const [vendor, setVendor] = useState([]);
   const [filters, setFilters] = useState({});
   const [minPrice, setMinPrice] = useState();
   const [maxPrice, setMaxPrice] = useState();
   const [shelves, setShelves] = useState([]);
+  const [pageNo, setPageNo] = useState(0);
+  const [totalPage, setTotalPage] = useState();
+  const [pageSize, setPageSize] = useState();
 
-  const getFilteredProductData = async (searchTerm) => {
-    const result = await fetchSearchResults(searchTerm, filters);
-    console.log("result hre", result);
-    setSearchResults(result);
+  const getFilteredProductData = async (
+    searchTerm,
+    filters,
+    pageNo,
+    pageSize
+  ) => {
+    const result = await fetchSearchResults(
+      searchTerm,
+      filters,
+      pageNo,
+      pageSize
+    );
+    setSearchResults(result.content);
+    setTotalPage(result.totalPages);
+    setPageSize(result.size);
   };
   const getCategoryData = async () => {
     const result = await fetchCategory();
@@ -28,7 +44,6 @@ export const Homepage = () => {
   };
   const getVendorData = async () => {
     const result = await fetchVendor();
-    console.log("result category", result);
     setVendor(result);
   };
 
@@ -40,19 +55,24 @@ export const Homepage = () => {
   const handleMinPriceInput = (e) => {
     setMinPrice(e.target.value);
     let currentFilter = JSON.parse(JSON.stringify(filters));
-    filters["minPrice"] = e.target.value;
+    currentFilter["minPrice"] = e.target.value;
     setFilters(currentFilter);
   };
 
   const handleMaxPriceInput = (e) => {
     setMaxPrice(e.target.value);
     let currentFilter = JSON.parse(JSON.stringify(filters));
-    filters["maxPrice"] = e.target.value;
+    currentFilter["maxPrice"] = e.target.value;
     setFilters(currentFilter);
   };
 
+  const handlePageNoClick = async (pageIndex) => {
+    setPageNo(pageIndex);
+    getFilteredProductData("", filters, pageIndex, pageSize);
+  };
+
   useEffect(() => {
-    getFilteredProductData("");
+    getFilteredProductData("", filters);
     getCategoryData();
     getVendorData();
     fetchAvailableShelves();
@@ -61,7 +81,12 @@ export const Homepage = () => {
   return (
     <div className="App">
       <Header />
-      <SearchBar handleSearchButton={getFilteredProductData} />
+      <SearchBar
+        searchTerm={searchTerm}
+        setSearchTerm={setSearchTerm}
+        handleSearchButton={getFilteredProductData}
+        filters={filters}
+      />
       Category
       <Filter
         value="category"
@@ -75,6 +100,7 @@ export const Homepage = () => {
         data={vendor}
         setFilters={setFilters}
         filters={filters}
+        searchTerm={searchTerm}
       />
       <input
         type="text"
@@ -89,11 +115,24 @@ export const Homepage = () => {
         value={maxPrice}
         onChange={handleMaxPriceInput}
       />
-      <Table
-        data={searchResults}
-        getFilteredProductData={getFilteredProductData}
-        shelves={shelves}
-        vendor={vendor}
+      {searchResults.length > 0 ? (
+        <Table
+          data={searchResults}
+          getFilteredProductData={getFilteredProductData}
+          shelves={shelves}
+          vendor={vendor}
+          filters={filters}
+        />
+      ) : (
+        <div style={{ marginTop: "10rem" }}>
+          No Products Found In Selected Criteria
+        </div>
+      )}
+      <Pagination
+        pageNo={pageNo}
+        handlePageNoClick={handlePageNoClick}
+        pageSize={pageSize}
+        totalPage={totalPage}
       />
     </div>
   );

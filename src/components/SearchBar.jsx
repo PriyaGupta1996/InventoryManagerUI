@@ -1,9 +1,8 @@
-import React, { useState } from "react";
+import React from "react";
 
 export const SearchBar = (props) => {
-  const [searchText, setSearchText] = useState("");
   const handleSearchBarInput = (e) => {
-    setSearchText(e.target.value);
+    props.setSearchTerm(e.target.value);
   };
   return (
     <div>
@@ -16,7 +15,9 @@ export const SearchBar = (props) => {
       <button
         type="button"
         className="search-button"
-        onClick={() => props.handleSearchButton(searchText)}
+        onClick={() =>
+          props.handleSearchButton(props.searchTerm, props.filters)
+        }
       >
         Search
       </button>

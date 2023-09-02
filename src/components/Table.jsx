@@ -21,7 +21,7 @@ export const Table = (props) => {
 
   const handleDeleteProduct = async (productId) => {
     await deleteProduct(productId);
-    props.getFilteredProductData("");
+    props.getFilteredProductData("", props.filters);
     setShowConfirmation(false);
   };
 
