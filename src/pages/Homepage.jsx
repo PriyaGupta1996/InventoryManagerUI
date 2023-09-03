@@ -22,7 +22,7 @@ export const Homepage = () => {
   const [totalPage, setTotalPage] = useState();
   const [pageSize, setPageSize] = useState();
   const [sortOrder, setSortOrder] = useState(true);
-  const [orderBy, setOrderBy] = useState();
+  const [orderBy, setOrderBy] = useState("shelf.isPrime");
 
   const getFilteredProductData = async () => {
     const result = await fetchSearchResults(
@@ -132,6 +132,7 @@ export const Homepage = () => {
           setOrderBy={setOrderBy}
           setSortOrder={setSortOrder}
           sortOrder={sortOrder}
+          orderBy={orderBy}
         />
       ) : (
         <div style={{ marginTop: "10rem" }}>

@@ -8,6 +8,7 @@ import { PopUpModal } from "./PopUpModal";
 import { inputValidation } from "../utils/inputValidation";
 
 export const Table = (props) => {
+  const { orderBy, sortOrder, setSortOrder, setOrderBy } = props;
   const [showConfirmation, setShowConfirmation] = useState(false);
   const [productToDelete, setProductToDelete] = useState({});
   const [editMode, setEditMode] = useState({});
@@ -59,9 +60,21 @@ export const Table = (props) => {
     setUpdateItem(currentItem);
   };
 
-  const handleSortByTitle = (title) => {
-    props.setOrderBy(title);
-    props.setSortOrder(!props.sortOrder);
+  const columnLabels = {
+    name: "Product Name",
+    category: "Category",
+    maxCapacity: "Max capacity",
+    "shelf.quantity": "Quantity",
+    pricePerUnit: "Price Per Unit",
+    "shelf.shelfNumber": "Shelf Number",
+    "vendor.name": "Vendor",
+  };
+
+  const handleSort = (column) => {
+    if (column !== "maxCapacity") {
+      setSortOrder(sortOrder === "asc" ? "dsc" : "asc");
+      setOrderBy(column);
+    }
   };
 
   return (
@@ -83,22 +96,16 @@ export const Table = (props) => {
       <table className="table-data">
         <thead>
           <tr>
-            <th onClick={() => handleSortByTitle("name")}>Product Name</th>
-            <th onClick={() => handleSortByTitle("category")}>Category</th>
-            <th>Max Capacity</th>
-            <th onClick={() => handleSortByTitle("shelf.quantity")}>
-              Quantity
-            </th>
-            <th onClick={() => handleSortByTitle("pricePerUnit")}>
-              Price Per Unit
-            </th>
-            <th onClick={() => handleSortByTitle("shelf.shelfNumber")}>
-              Shelf Number
-            </th>
-            <th onClick={() => handleSortByTitle("vendor.name")}>Vendor</th>
+            {Object.keys(columnLabels).map((column) => (
+              <th key={column} onClick={() => handleSort(column)}>
+                {columnLabels[column]}
+                {orderBy === column && sortOrder === "asc" && <span>⬆️ </span>}
+                {orderBy === column && sortOrder === "dsc" && <span>⬇️</span>}
+              </th>
+            ))}
           </tr>
         </thead>
-        {props.data.map((row, index) => (
+        {props.data.map((row) => (
           <tr
             style={row.prime === true ? { backgroundColor: "lightblue" } : {}}
           >

@@ -28,7 +28,7 @@ export const fetchSearchResults = async (searchText, filters, pageNo, pageSize, 
         "page": pageNo,
         "size": pageSize,
         "orderBy": orderBy,
-        "sortOrder": sortOrder === true ? "dsc" : "asc"
+        "sortOrder": sortOrder
     }
     for (let key in params) {
         if (params[key] === "")
