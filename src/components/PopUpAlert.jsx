@@ -1,13 +1,13 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import Alert from "react-bootstrap/Alert";
 
 export const PopUpAlert = (props) => {
-  console.log("---------", props.value);
+  const { value, onClose } = props;
   const [show, setShow] = useState(true);
 
   const onCloseHandler = () => {
     setShow(false);
-    props.onClose({});
+    onClose({});
   };
 
   const infoMap = {
@@ -15,16 +15,12 @@ export const PopUpAlert = (props) => {
     success: "Success!",
   };
 
-  if (show) {
-    return (
-      <Alert
-        variant={props.value.status}
-        onClose={() => onCloseHandler()}
-        dismissible
-      >
-        <Alert.Heading>{infoMap[props.value.status]}</Alert.Heading>
-        <p>{props.value.info}</p>
+  return (
+    show && (
+      <Alert variant={value.status} onClose={onCloseHandler} dismissible>
+        <Alert.Heading>{infoMap[value.status]}</Alert.Heading>
+        <p>{value.info}</p>
       </Alert>
-    );
-  }
+    )
+  );
 };

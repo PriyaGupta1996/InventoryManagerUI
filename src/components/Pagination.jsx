@@ -1,19 +1,23 @@
 import React from "react";
 
 export const Pagination = (props) => {
+  const { totalPage, pageNo, setPageNo } = props;
   const pagesIndexToDisplay = [];
-  for (let i = 0; i < props.totalPage; i++) {
-    pagesIndexToDisplay.push(i + 1);
+
+  for (let pageIndex = 1; pageIndex <= totalPage; pageIndex++) {
+    pagesIndexToDisplay.push(pageIndex);
   }
 
   return (
-    <div display="flex" style={{ marginTop: "2rem" }}>
+    <div style={{ marginTop: "2rem" }}>
       {pagesIndexToDisplay.map((pageIndex) => (
         <button
-          onClick={() => props.setPageNo(pageIndex - 1)}
-          style={
-            pageIndex === props.pageNo + 1 ? { backgroundColor: "yellow" } : {}
-          }
+          key={pageIndex}
+          className={`btn ${pageIndex === pageNo + 1 ? "bg-primary" : ""}`}
+          onClick={() => setPageNo(pageIndex - 1)}
+          style={{
+            marginRight: "0.5rem",
+          }}
         >
           {pageIndex}
         </button>

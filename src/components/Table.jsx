@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import PropTypes from "prop-types"; // Import PropTypes
 import dustbin from "../images/dustbin.png";
 import pencil from "../images/pencil.png";
 import { deleteProduct, updateProduct } from "../api/product";
@@ -244,7 +243,7 @@ export const Table = (props) => {
                 )}
                 {editMode[row.productId] && (
                   <button
-                    className="btn btn-primary" // Add Bootstrap button class here
+                    className="btn btn-primary"
                     onClick={() => handleSaveChanges()}
                   >
                     Save
@@ -257,16 +256,4 @@ export const Table = (props) => {
       </table>
     </div>
   );
-};
-
-// Add PropTypes to document the expected props
-Table.propTypes = {
-  orderBy: PropTypes.string.isRequired,
-  sortOrder: PropTypes.string.isRequired,
-  setSortOrder: PropTypes.func.isRequired,
-  setOrderBy: PropTypes.func.isRequired,
-  data: PropTypes.array.isRequired,
-  shelves: PropTypes.array.isRequired,
-  vendor: PropTypes.array.isRequired,
-  getFilteredProductData: PropTypes.func.isRequired,
 };
