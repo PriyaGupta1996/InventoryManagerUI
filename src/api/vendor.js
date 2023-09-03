@@ -1,0 +1,8 @@
+import axios from "./axiosConfig";
+import { API_ROUTES } from "../constants/apiRoutes"
+
+
+export const fetchVendor = async () => {
+    const results = await axios.get(API_ROUTES.FETCH_VENDOR)
+    return results.data;
+}

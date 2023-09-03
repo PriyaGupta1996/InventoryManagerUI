@@ -3,10 +3,10 @@ import { Header } from "../components/Header";
 import { Filter } from "../components/Filter";
 import { Table } from "../components/Table";
 import React, { useEffect, useState } from "react";
-import { fetchSearchResults } from "../services/fetchSearchResults";
-import { fetchCategory } from "../services/fetchCategory";
-import { fetchVendor } from "../services/fetchVendor";
-import { fetchAvailableShelfNumber } from "../services/fetchAvailableShelfNumber";
+import { fetchSearchResults } from "../api/product";
+import { fetchCategory } from "../api/category";
+import { fetchVendor } from "../api/vendor";
+import { fetchAvailableShelfNumber } from "../api/shelf";
 import { Pagination } from "../components/Pagination";
 
 export const Homepage = () => {
@@ -37,6 +37,13 @@ export const Homepage = () => {
     setTotalPage(result.totalPages);
     setPageSize(result.size);
   };
+
+  const updateDisplay = () => {
+    getFilteredProductData();
+    getCategoryData();
+    getVendorData();
+    fetchAvailableShelves();
+  };
   const getCategoryData = async () => {
     const result = await fetchCategory();
     setCategory(result);
@@ -66,10 +73,7 @@ export const Homepage = () => {
   };
 
   useEffect(() => {
-    getFilteredProductData();
-    getCategoryData();
-    getVendorData();
-    fetchAvailableShelves();
+    updateDisplay();
   }, []);
 
   useEffect(() => {
@@ -79,6 +83,7 @@ export const Homepage = () => {
   useEffect(() => {
     getFilteredProductData();
   }, [orderBy, sortOrder]);
+  useEffect(() => {}, []);
 
   return (
     <div className="App">

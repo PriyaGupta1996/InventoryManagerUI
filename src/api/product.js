@@ -1,6 +1,14 @@
-import axios from "axios";
+import axios from "./axiosConfig";
+import { API_ROUTES } from "../constants/apiRoutes"
+
+export const updateProduct = async (updateItem) => {
+    await axios.put(API_ROUTES.UPDATE_PRODUCT(updateItem.productId), { ...updateItem })
+}
+
+export const deleteProduct = async (productId) => {
+    await axios.delete(API_ROUTES.DELETE_PRODUCT(productId))
+}
 export const fetchSearchResults = async (searchText, filters, pageNo, pageSize, orderBy, sortOrder) => {
-    console.log("filters", pageNo, pageSize);
     let params = {
         "productName": searchText,
         "category": filters?.category,
@@ -16,7 +24,6 @@ export const fetchSearchResults = async (searchText, filters, pageNo, pageSize, 
         if (params[key] === "")
             delete params[key]
     }
-    console.log("params", params)
-    const results = await axios.get(`api/products`, { params })
+    const results = await axios.get(API_ROUTES.FETCH_SEARCH_RESULTS, { params })
     return results.data;
 }

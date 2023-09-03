@@ -1,13 +1,9 @@
 import React, { useState } from "react";
 import dustbin from "../images/dustbin.png";
 import pencil from "../images/pencil.png";
-import { deleteProduct } from "../services/deleteProduct";
-import { updateProduct } from "../services/updateProduct";
-const colorMap = {
-  alert: "lightpink",
-  ok: "yellow",
-  good: "lightgreen",
-};
+import { deleteProduct, updateProduct } from "../api/product";
+import { colorMap } from "../constants/colorCode";
+
 export const Table = (props) => {
   const [showConfirmation, setShowConfirmation] = useState(false);
   const [productToDelete, setproductToDelete] = useState({});
@@ -67,6 +63,7 @@ export const Table = (props) => {
           <tr>
             <th onClick={() => handleSortByTitle("name")}>Product Name</th>
             <th onClick={() => handleSortByTitle("category")}>Category</th>
+            <th>Max Capacity</th>
             <th onClick={() => handleSortByTitle("shelf.quantity")}>
               Quantity
             </th>
@@ -109,14 +106,15 @@ export const Table = (props) => {
                 row.category
               )}
             </td>
+            <td>{row.maxCapacity}</td>
             <td
               style={
                 row.quantity > row.maxCapacity * 0.75
-                  ? { backgroundColor: colorMap["good"] }
+                  ? { backgroundColor: colorMap.GOOD }
                   : row.quantity > row.maxCapacity * 0.25 &&
                     row.quantity < row.maxCapacity * 0.75
-                  ? { backgroundColor: colorMap["ok"] }
-                  : { backgroundColor: colorMap["alert"] }
+                  ? { backgroundColor: colorMap.OK }
+                  : { backgroundColor: colorMap.ALERT }
               }
             >
               {editMode[row.productId] ? (
