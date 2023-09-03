@@ -4,22 +4,29 @@ import pencil from "../images/pencil.png";
 import { deleteProduct, updateProduct } from "../api/product";
 import { colorMap } from "../constants/colorCode";
 import { PopUpAlert } from "./PopUpAlert";
+import { PopUpModal } from "./PopUpModal";
+import { inputValidation } from "../utils/inputValidation";
 
 export const Table = (props) => {
   const [showConfirmation, setShowConfirmation] = useState(false);
-  const [productToDelete, setproductToDelete] = useState({});
+  const [productToDelete, setProductToDelete] = useState({});
   const [editMode, setEditMode] = useState({});
   const [updateItem, setUpdateItem] = useState();
-  const [apiInfo, setApiInfo] = useState({});
+  const [alertInfo, setAlertInfo] = useState({});
 
   const handleShowConfirmation = (product) => {
     setShowConfirmation(true);
-    setproductToDelete(product);
+    setProductToDelete(product);
   };
 
   const handleDeleteProduct = async (productId) => {
-    await deleteProduct(productId);
-    props.getFilteredProductData();
+    const response = await deleteProduct(productId);
+    if (response.error) {
+      setAlertInfo({ info: response.error.data, status: "danger" });
+    } else {
+      setAlertInfo({ info: response.data.message, status: "success" });
+      props.getFilteredProductData();
+    }
     setShowConfirmation(false);
   };
 
@@ -28,12 +35,17 @@ export const Table = (props) => {
     setUpdateItem(row);
   };
   const handleSaveChanges = async () => {
+    const errorLogs = inputValidation(updateItem);
+    if (errorLogs.length > 0) {
+      setAlertInfo({ info: errorLogs, status: "danger" });
+      setEditMode({ [updateItem.productId]: false });
+      return;
+    }
     const response = await updateProduct(updateItem);
-    console.log("++++", response);
     if (response.error) {
-      setApiInfo({ info: response.error.data, status: "danger" });
+      setAlertInfo({ info: response.error.data, status: "danger" });
     } else {
-      setApiInfo({ info: response.data.message, status: "success" });
+      setAlertInfo({ info: response.data.message, status: "success" });
       await props.getFilteredProductData();
       setEditMode({ [updateItem.productId]: false });
     }
@@ -43,6 +55,7 @@ export const Table = (props) => {
     let currentItem = JSON.parse(JSON.stringify(updateItem));
     currentItem[fieldName] = value;
     console.log("currentItem", currentItem);
+    // if (isValidProductPrice(value))
     setUpdateItem(currentItem);
   };
 
@@ -54,21 +67,17 @@ export const Table = (props) => {
   return (
     <div className="table-div">
       {showConfirmation && (
-        <div className="confirmation-dialog">
-          <p>
-            Are you sure you want to delete : {productToDelete.productName}?
-          </p>
-          <button
-            onClick={() => handleDeleteProduct(productToDelete.productId)}
-          >
-            Confirm
-          </button>
-          <button onClick={() => setShowConfirmation(false)}>Cancel</button>
-        </div>
+        <PopUpModal
+          type="delete"
+          product={productToDelete}
+          show={showConfirmation}
+          setShow={setShowConfirmation}
+          onConfirm={handleDeleteProduct}
+        />
       )}
 
-      {Object.keys(apiInfo).length > 0 && (
-        <PopUpAlert value={apiInfo} onClose={setApiInfo} />
+      {Object.keys(alertInfo).length > 0 && (
+        <PopUpAlert value={alertInfo} onClose={setAlertInfo} />
       )}
 
       <table className="table-data">
@@ -97,9 +106,10 @@ export const Table = (props) => {
               {editMode[row.productId] ? (
                 <input
                   type="text"
+                  maxlength="100"
                   value={updateItem.productName}
                   onChange={(e) =>
-                    handleInputChange("productName", e.target.value)
+                    handleInputChange("productName", e.target.value.trim())
                   }
                 />
               ) : (
@@ -110,9 +120,10 @@ export const Table = (props) => {
               {editMode[row.productId] ? (
                 <input
                   type="text"
+                  maxlength="100"
                   value={updateItem.category}
                   onChange={(e) =>
-                    handleInputChange("category", e.target.value)
+                    handleInputChange("category", e.target.value.trim())
                   }
                 />
               ) : (
@@ -132,7 +143,8 @@ export const Table = (props) => {
             >
               {editMode[row.productId] ? (
                 <input
-                  type="text"
+                  type="number"
+                  step="1"
                   value={updateItem.quantity}
                   onChange={(e) =>
                     handleInputChange("quantity", e.target.value)
@@ -146,7 +158,7 @@ export const Table = (props) => {
               Rs.{" "}
               {editMode[row.productId] ? (
                 <input
-                  type="text"
+                  type="number"
                   value={updateItem.pricePerUnit}
                   onChange={(e) =>
                     handleInputChange("pricePerUnit", e.target.value)

@@ -5,14 +5,18 @@ export const updateProduct = async (updateItem) => {
     try {
         return await axios.put(API_ROUTES.UPDATE_PRODUCT(updateItem.productId), { ...updateItem })
     } catch (e) {
-        console.log(e.response.data)
-        if (e.response.data.statusCode === 400)
+        if (e.response.data.statusCode === 400 || e.response.data.statusCode === 404)
             return { error: { data: e.response.data.message } }
     }
 }
 
 export const deleteProduct = async (productId) => {
-    await axios.delete(API_ROUTES.DELETE_PRODUCT(productId))
+    try {
+        return await axios.delete(API_ROUTES.DELETE_PRODUCT(productId))
+    } catch (e) {
+        if (e.response.data.statusCode === 404)
+            return { error: { data: e.response.data.message } }
+    }
 }
 export const fetchSearchResults = async (searchText, filters, pageNo, pageSize, orderBy, sortOrder) => {
     let params = {
