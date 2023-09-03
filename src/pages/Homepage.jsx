@@ -21,7 +21,7 @@ export const Homepage = () => {
   const [pageNo, setPageNo] = useState(0);
   const [totalPage, setTotalPage] = useState();
   const [pageSize, setPageSize] = useState();
-  const [sortOrder, setSortOrder] = useState(true);
+  const [sortOrder, setSortOrder] = useState("dsc");
   const [orderBy, setOrderBy] = useState("shelf.isPrime");
 
   const getFilteredProductData = async () => {
