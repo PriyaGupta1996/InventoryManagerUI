@@ -1,6 +1,6 @@
 import axios from "./axiosConfig";
 import { API_ROUTES } from "../constants/apiRoutes"
-
+import { filterEmptyValues } from "../utils/filterEmptyValues"
 export const updateProduct = async (updateItem) => {
     try {
         return await axios.put(API_ROUTES.UPDATE_PRODUCT(updateItem.productId), { ...updateItem })
@@ -30,10 +30,7 @@ export const fetchSearchResults = async (searchText, filters, pageNo, pageSize, 
         "orderBy": orderBy,
         "sortOrder": sortOrder
     }
-    for (let key in params) {
-        if (params[key] === "")
-            delete params[key]
-    }
+    params = filterEmptyValues(params)
     const results = await axios.get(API_ROUTES.FETCH_SEARCH_RESULTS, { params })
     return results.data;
 }

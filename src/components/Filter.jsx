@@ -1,16 +1,20 @@
 import React from "react";
 
 export const Filter = (props) => {
+  const { filters, value, setFilters, data } = props;
+
   const handleOnFilterChange = (e) => {
-    let filters = JSON.parse(JSON.stringify(props.filters));
-    filters[props.value] = e.target.value;
-    props.setFilters(filters);
+    const newValue = e.target.value;
+    setFilters({ ...filters, [value]: newValue });
   };
+
   return (
     <select className="filter-dropdown" onChange={handleOnFilterChange}>
       <option value="">--None--</option>
-      {props.data.map((item) => (
-        <option value={item.id || item}>{item.name || item}</option>
+      {data.map((item) => (
+        <option key={item.id || item} value={item.id || item}>
+          {item.name || item}
+        </option>
       ))}
     </select>
   );

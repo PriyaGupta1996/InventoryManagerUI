@@ -8,7 +8,9 @@ import { fetchCategory } from "../api/category";
 import { fetchVendor } from "../api/vendor";
 import { fetchAvailableShelfNumber } from "../api/shelf";
 import { Pagination } from "../components/Pagination";
-
+import { inputValidation } from "../utils/inputValidation";
+import { PopUpAlert } from "../components/PopUpAlert";
+import { filterEmptyValues } from "../utils/filterEmptyValues";
 export const Homepage = () => {
   const [searchResults, setSearchResults] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
@@ -23,6 +25,7 @@ export const Homepage = () => {
   const [pageSize, setPageSize] = useState();
   const [sortOrder, setSortOrder] = useState("dsc");
   const [orderBy, setOrderBy] = useState("shelf.isPrime");
+  const [alertInfo, setAlertInfo] = useState({});
 
   const getFilteredProductData = async () => {
     const result = await fetchSearchResults(
@@ -36,6 +39,14 @@ export const Homepage = () => {
     setSearchResults(result.content);
     setTotalPage(result.totalPages);
     setPageSize(result.size);
+  };
+  const handleSaveChanges = async () => {
+    const errorLogs = inputValidation(filterEmptyValues(filters));
+    if (errorLogs.length > 0) {
+      setAlertInfo({ info: errorLogs, status: "danger" });
+      return;
+    }
+    await getFilteredProductData();
   };
 
   const updateDisplay = () => {
@@ -87,11 +98,14 @@ export const Homepage = () => {
 
   return (
     <div className="App">
+      {Object.keys(alertInfo).length > 0 && (
+        <PopUpAlert value={alertInfo} onClose={setAlertInfo} />
+      )}
       <Header />
       <SearchBar
         searchTerm={searchTerm}
         setSearchTerm={setSearchTerm}
-        handleSearchButton={getFilteredProductData}
+        handleSearchButton={handleSaveChanges}
         filters={filters}
       />
       Category
@@ -109,15 +123,16 @@ export const Homepage = () => {
         filters={filters}
         searchTerm={searchTerm}
       />
+      Min Price{" "}
       <input
-        type="text"
+        type="number"
         placeholder="Min Price"
         value={minPrice}
         onChange={handleMinPriceInput}
       />{" "}
-      &
+      Max Price{" "}
       <input
-        type="text"
+        type="number"
         placeholder="Max Price"
         value={maxPrice}
         onChange={handleMaxPriceInput}
