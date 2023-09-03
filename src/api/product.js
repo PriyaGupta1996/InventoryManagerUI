@@ -2,7 +2,13 @@ import axios from "./axiosConfig";
 import { API_ROUTES } from "../constants/apiRoutes"
 
 export const updateProduct = async (updateItem) => {
-    await axios.put(API_ROUTES.UPDATE_PRODUCT(updateItem.productId), { ...updateItem })
+    try {
+        return await axios.put(API_ROUTES.UPDATE_PRODUCT(updateItem.productId), { ...updateItem })
+    } catch (e) {
+        console.log(e.response.data)
+        if (e.response.data.statusCode === 400)
+            return { error: { data: e.response.data.message } }
+    }
 }
 
 export const deleteProduct = async (productId) => {

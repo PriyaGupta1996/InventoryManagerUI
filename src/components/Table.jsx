@@ -3,12 +3,14 @@ import dustbin from "../images/dustbin.png";
 import pencil from "../images/pencil.png";
 import { deleteProduct, updateProduct } from "../api/product";
 import { colorMap } from "../constants/colorCode";
+import { PopUpAlert } from "./PopUpAlert";
 
 export const Table = (props) => {
   const [showConfirmation, setShowConfirmation] = useState(false);
   const [productToDelete, setproductToDelete] = useState({});
   const [editMode, setEditMode] = useState({});
   const [updateItem, setUpdateItem] = useState();
+  const [apiInfo, setApiInfo] = useState({});
 
   const handleShowConfirmation = (product) => {
     setShowConfirmation(true);
@@ -26,9 +28,15 @@ export const Table = (props) => {
     setUpdateItem(row);
   };
   const handleSaveChanges = async () => {
-    await updateProduct(updateItem);
-    await props.getFilteredProductData();
-    setEditMode({ [updateItem.productId]: false });
+    const response = await updateProduct(updateItem);
+    console.log("++++", response);
+    if (response.error) {
+      setApiInfo({ info: response.error.data, status: "danger" });
+    } else {
+      setApiInfo({ info: response.data.message, status: "success" });
+      await props.getFilteredProductData();
+      setEditMode({ [updateItem.productId]: false });
+    }
   };
   const handleInputChange = (fieldName, value) => {
     console.log("updateItem", updateItem);
@@ -58,6 +66,11 @@ export const Table = (props) => {
           <button onClick={() => setShowConfirmation(false)}>Cancel</button>
         </div>
       )}
+
+      {Object.keys(apiInfo).length > 0 && (
+        <PopUpAlert value={apiInfo} onClose={setApiInfo} />
+      )}
+
       <table className="table-data">
         <thead>
           <tr>
